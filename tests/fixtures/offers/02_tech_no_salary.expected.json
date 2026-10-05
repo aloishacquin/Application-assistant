@@ -1,0 +1,47 @@
+{
+  "title": "Software Engineer (Python, Backend)",
+  "company": "Merlion Robotics",
+  "location": "Singapore, one-north",
+  "seniority": "junior",
+  "required_skills": [
+    "Python",
+    "Web APIs",
+    "Docker",
+    "CI/CD",
+    "English"
+  ],
+  "nice_to_have": [
+    "Kubernetes",
+    "gRPC",
+    "ROS",
+    "PostgreSQL",
+    "Redis"
+  ],
+  "keywords": [
+    "Python",
+    "FastAPI",
+    "REST",
+    "gRPC",
+    "Docker",
+    "Kubernetes",
+    "AWS EKS",
+    "CI/CD",
+    "PostgreSQL",
+    "Redis",
+    "ROS",
+    "code reviews",
+    "on-call"
+  ],
+  "responsibilities": [
+    "Build and scale backend services in Python (FastAPI) coordinating robots in real time",
+    "Design REST and gRPC APIs",
+    "Containerise services with Docker and deploy them on Kubernetes (AWS EKS)",
+    "Write tests and take part in code reviews and on-call rotation"
+  ],
+  "min_years_experience": null,
+  "salary_min_sgd": null,
+  "salary_max_sgd": null,
+  "sector": "other",
+  "contact_email": null,
+  "language": "en"
+}

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}JobApply{% endblock %} · JobApply SG</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/htmx.min.js" defer></script>
+</head>
+<body hx-headers='{"X-CSRF-Token": "{{ csrf_token }}"}'>
+  {% if authenticated %}
+  <header class="topbar">
+    <a class="brand" href="/">JobApply <span>SG</span></a>
+    <nav>
+      {% set links = [("/", "Tableau de bord"), ("/offers", "Offres"), ("/applications", "Candidatures"), ("/offers/new", "Ajouter"), ("/sources", "Sources"), ("/profile", "Profil")] %}
+      {% for href, label in links %}
+      <a href="{{ href }}" {% if path == href %}aria-current="page"{% endif %}>{{ label }}</a>
+      {% endfor %}
+      <form method="post" action="/logout" class="inline">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button class="link">Déconnexion</button>
+      </form>
+    </nav>
+  </header>
+  {% endif %}
+  <main class="container">
+    {% for f in flashes %}
+    <div class="flash {{ f.kind }}" role="status">{{ f.message }}</div>
+    {% endfor %}
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

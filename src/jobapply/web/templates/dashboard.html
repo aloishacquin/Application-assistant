@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% from "_macros.html" import score_badge, visa_badge, csrf_field with context %}
+{% block title %}Tableau de bord{% endblock %}
+{% block content %}
+<h1>Tableau de bord</h1>
+<div class="stats">
+  <a class="stat" href="/offers?status=analyzed"><strong>{{ offer_counts[OfferStatus.ANALYZED] }}</strong><span>offres à trier</span></a>
+  <a class="stat" href="/applications"><strong>{{ application_counts[ApplicationStatus.APPLIED] + application_counts[ApplicationStatus.INTERVIEW] }}</strong><span>candidatures en cours</span></a>
+  <a class="stat" href="/applications?status=interview"><strong>{{ application_counts[ApplicationStatus.INTERVIEW] }}</strong><span>entretiens</span></a>
+  <a class="stat" href="/applications?status=ready"><strong>{{ application_counts[ApplicationStatus.READY] + application_counts[ApplicationStatus.PREPARING] }}</strong><span>à envoyer</span></a>
+  <div class="stat"><strong>{{ "%.2f" | format(costs.today_usd) }} $</strong><span>coût LLM aujourd'hui</span></div>
+  <div class="stat"><strong>{{ "%.2f" | format(costs.month_usd) }} $</strong><span>coût LLM ce mois-ci</span></div>
+</div>
+
+<section class="card {{ 'attention' if due else '' }}">
+  <h2>Relances dues ({{ due | length }})</h2>
+  {% if due %}
+  <ul class="offer-list">
+    {% for application, offer in due %}
+    <li>
+      <a href="/applications/{{ application.id }}">{{ offer.label }}</a>
+      <span class="badge medium">{{ application.next_follow_up_at | relative_days }}</span>
+      <span class="muted">envoyée le {{ application.applied_at | date }}{% if application.follow_up_count %}, {{ application.follow_up_count }} relance(s){% endif %}</span>
+      <span class="row-actions">
+        <form method="post" action="/applications/{{ application.id }}/follow-up">{{ csrf_field() }}<button>Relance faite</button></form>
+        <form method="post" action="/applications/{{ application.id }}/snooze">{{ csrf_field() }}<input type="hidden" name="days" value="3"><button>Reporter de 3 j</button></form>
+      </span>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="muted">Aucune relance à faire aujourd'hui.</p>
+  {% endif %}
+</section>
+
+{% if interviews %}
+<section class="card">
+  <h2>Entretiens à venir</h2>
+  <ul class="offer-list">
+    {% for application, offer in interviews %}
+    <li><strong>{{ application.interview_at | dt }}</strong> <a href="/applications/{{ application.id }}">{{ offer.label }}</a> <span class="muted">{{ application.interview_at | relative_days }}</span></li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+<section class="card">
+  <div class="card-head">
+    <h2>Meilleures offres à trier</h2>
+    <a class="button" href="/offers/new">Ajouter une offre</a>
+  </div>
+  {% if to_review %}
+  <ul class="offer-list">
+    {% for offer, analysis in to_review %}
+    <li>
+      {{ score_badge(analysis) }}
+      <a href="/offers/{{ offer.id }}">{{ offer.label }}</a>
+      {{ visa_badge(analysis.visa_verdict if analysis else none) }}
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="muted">Aucune offre à trier pour l'instant. Colle le lien d'une offre pour commencer.</p>
+  {% endif %}
+</section>
+
+{% if application_counts %}
+<section class="card">
+  <h2>Candidatures par statut</h2>
+  <ul class="inline-list">
+    {% for status, label in APPLICATION_STATUS_LABELS.items() if application_counts[status] %}
+    <li><a href="/applications?status={{ status.value }}">{{ label }}</a> : <strong>{{ application_counts[status] }}</strong></li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+{% endblock %}

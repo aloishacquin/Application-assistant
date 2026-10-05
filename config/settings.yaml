@@ -1,0 +1,35 @@
+# Application settings (non-secret). Secrets go in .env.
+
+language: en              # language of generated documents
+timezone: Europe/Paris    # used to display dates in the web interface
+
+cv:
+  max_pages: 1            # 1 by default, 2 max
+  max_bullets: 14         # whole CV; keeps a 1-page CV on one page
+  max_bullets_per_entry: 5
+
+cover_letter:
+  min_words: 250
+  max_words: 350
+
+matching:
+  min_score: 60           # below this, the pipeline stops and reports
+  weights:                # final score = weighted average, must sum to 1
+    keywords: 0.4
+    llm: 0.6
+  required_share: 0.7     # in the keyword score: required skills vs other offer keywords
+  experience_penalty_per_year: 10   # points removed per missing year of experience
+
+llm:
+  max_retries: 2          # retries when the JSON output fails Pydantic validation
+  max_tokens: 16000       # includes the model's thinking tokens
+  effort: medium          # low | medium | high | xhigh | max — null to omit (e.g. Haiku)
+  refusal_fallback: true  # server-side fallback to another model if the request is refused
+  pricing:                # USD per million tokens — update from the Anthropic pricing page
+    claude-opus-5-5:   { input: 4.00, output: 20.00, cache_write: 5.00, cache_read: 0.20 }
+    claude-sonnet-5-5: { input: 2.00, output: 10.00, cache_write: 2.50, cache_read: 0.20 }
+    claude-haiku-4-5:  { input: 1.00, output: 5.00,  cache_write: 1.25, cache_read: 0.10 }
+
+tracking:
+  follow_up_days: 7       # delay before a follow-up is due after sending, then between follow-ups
+  ghosted_after_days: 30  # no news this long after the last contact -> "sans réponse"

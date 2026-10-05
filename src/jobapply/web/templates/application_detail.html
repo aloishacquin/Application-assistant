@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf_field with context %}
+{% block title %}Candidature — {{ offer.label }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>{{ job.title if job else offer.label }}</h1>
+    <p class="subtitle">
+      {% if job %}{{ job.company }} · {{ job.location }} · {% endif %}
+      <a href="/offers/{{ offer.id }}">analyse de l'offre</a>
+      {% if offer.url %} · <a href="{{ offer.url }}" target="_blank" rel="noopener noreferrer">offre d'origine</a>{% endif %}
+    </p>
+  </div>
+  <span class="status status-application">{{ APPLICATION_STATUS_LABELS[application.status] }}</span>
+</div>
+
+{% if application.generating %}
+  {% include "_generation_pending.html" %}
+{% endif %}
+
+{% if application.generation_error %}
+<section class="card error-card">
+  <h2>La génération a échoué</h2>
+  <pre class="raw">{{ application.generation_error }}</pre>
+  <form method="post" action="/applications/{{ application.id }}/generate">
+    {{ csrf_field() }}<input type="hidden" name="kind" value="all">
+    <button class="primary">Relancer la génération</button>
+  </form>
+</section>
+{% endif %}
+
+<section class="card tracking">
+  <h2>Suivi</h2>
+  {% if application.status in (ApplicationStatus.PREPARING, ApplicationStatus.READY) %}
+  <form method="post" action="/applications/{{ application.id }}/applied" class="inline-form">
+    {{ csrf_field() }}
+    <label for="applied_on">J'ai envoyé ma candidature le</label>
+    <input id="applied_on" type="date" name="applied_on" value="{{ today }}" max="{{ today }}">
+    <button class="primary">Marquer comme envoyée</button>
+  </form>
+  <p class="hint">Les versions actuelles du CV et de la lettre seront marquées comme envoyées, et une relance sera programmée.</p>
+  {% else %}
+  <dl>
+    <dt>Envoyée le</dt><dd>{{ application.applied_at | date }}</dd>
+    {% if application.follow_up_count %}<dt>Relances</dt><dd>{{ application.follow_up_count }} (dernière le {{ application.last_follow_up_at | date }})</dd>{% endif %}
+    {% if application.status in FOLLOW_UP_STATUSES and application.next_follow_up_at %}
+    <dt>Prochaine relance</dt><dd>{{ application.next_follow_up_at | date }} ({{ application.next_follow_up_at | relative_days }})</dd>
+    {% endif %}
+    {% if application.interview_at %}<dt>Entretien</dt><dd>{{ application.interview_at | dt }}</dd>{% endif %}
+  </dl>
+  {% if application.status in FOLLOW_UP_STATUSES and application.next_follow_up_at %}
+  <div class="actions">
+    <form method="post" action="/applications/{{ application.id }}/follow-up">{{ csrf_field() }}<button>Relance faite</button></form>
+    <form method="post" action="/applications/{{ application.id }}/snooze" class="inline-form">
+      {{ csrf_field() }}
+      <select name="days" aria-label="Reporter de">
+        {% for d in (1, 3, 7, 14) %}<option value="{{ d }}" {% if d == 3 %}selected{% endif %}>{{ d }} j</option>{% endfor %}
+      </select>
+      <button>Reporter la relance</button>
+    </form>
+  </div>
+  {% endif %}
+  {% endif %}
+
+  <div class="grid">
+    <form method="post" action="/applications/{{ application.id }}/set-status" class="inline-form">
+      {{ csrf_field() }}
+      <label for="status">Statut</label>
+      <select id="status" name="status">
+        {% for s in MANUAL_STATUSES %}
+        <option value="{{ s.value }}" {% if s == application.status %}selected{% endif %}>{{ APPLICATION_STATUS_LABELS[s] }}</option>
+        {% endfor %}
+      </select>
+      <button>Changer</button>
+    </form>
+    <form method="post" action="/applications/{{ application.id }}/interview" class="inline-form">
+      {{ csrf_field() }}
+      <label for="when">Entretien</label>
+      <input id="when" type="datetime-local" name="when" value="{{ application.interview_at | input_datetime }}">
+      <button>Enregistrer</button>
+    </form>
+  </div>
+</section>
+
+{% for kind, title in ((DocumentKind.CV, "CV"), (DocumentKind.LETTER, "Lettre de motivation")) %}
+{% set doc = latest.get(kind) %}
+<section class="card document">
+  <div class="card-head">
+    <h2>{{ title }}{% if doc %} <span class="muted">v{{ doc.version }}{% if doc.edited %} · modifiée à la main{% endif %}</span>{% endif %}</h2>
+    {% if doc %}
+    <div class="actions compact">
+      <a class="button primary" href="/documents/{{ doc.id }}/pdf?download=1">Télécharger le PDF</a>
+      <a class="button" href="/documents/{{ doc.id }}/edit">Modifier</a>
+      {% if not application.generating %}
+      <form method="post" action="/applications/{{ application.id }}/generate">
+        {{ csrf_field() }}<input type="hidden" name="kind" value="{{ kind.value }}">
+        <button>Régénérer</button>
+      </form>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+
+  {% if doc %}
+    {% set payload = doc.json_payload %}
+    {% if payload.issues %}
+    <div class="flash warning">
+      <strong>Avertissements du validateur</strong> (modification manuelle) :
+      <ul>{% for issue in payload.issues %}<li>{{ issue }}</li>{% endfor %}</ul>
+    </div>
+    {% endif %}
+    {% if payload.ats_warnings %}
+    <div class="flash warning">
+      <strong>Contrôle ATS</strong>
+      <ul>{% for w in payload.ats_warnings %}<li>{{ w }}</li>{% endfor %}</ul>
+    </div>
+    {% else %}
+    <p class="ats-ok">Contrôle ATS : texte lisible, ordre respecté, {{ payload.ats.pages }} page(s){% if payload.ats.required_present %}, compétences requises présentes ({{ payload.ats.required_present | join(", ") }}){% endif %}.</p>
+    {% endif %}
+
+    <iframe class="pdf-preview" src="/documents/{{ doc.id }}/pdf" title="Aperçu : {{ title }}"></iframe>
+
+    {% if kind == DocumentKind.LETTER and payload.text %}
+    <details>
+      <summary>Texte brut ({{ payload.word_count }} mots) — à copier dans un formulaire</summary>
+      <textarea class="copy" rows="14" readonly>{{ payload.text }}</textarea>
+    </details>
+    {% endif %}
+  {% elif not application.generating %}
+    <p class="muted">Pas encore généré.</p>
+    <form method="post" action="/applications/{{ application.id }}/generate">
+      {{ csrf_field() }}<input type="hidden" name="kind" value="{{ kind.value }}">
+      <button class="primary">Générer</button>
+    </form>
+  {% endif %}
+</section>
+{% endfor %}
+
+<div class="grid">
+  <section class="card">
+    <h2>Notes</h2>
+    <form method="post" action="/applications/{{ application.id }}/notes">
+      {{ csrf_field() }}
+      <textarea name="notes" rows="6" placeholder="Contact, salaire évoqué, impressions…">{{ application.notes }}</textarea>
+      <button type="submit">Enregistrer les notes</button>
+    </form>
+  </section>
+  <section class="card">
+    <h2>Historique</h2>
+    <form method="post" action="/applications/{{ application.id }}/note" class="inline-form">
+      {{ csrf_field() }}
+      <input type="text" name="text" placeholder="Ajouter un événement (appel, email reçu…)" aria-label="Événement">
+      <button>Ajouter</button>
+    </form>
+    <ul class="timeline">
+      {% for e in events %}<li class="event-{{ e.kind }}"><time>{{ e.created_at | dt }}</time> {{ e.message }}</li>{% endfor %}
+    </ul>
+  </section>
+</div>
+
+{% if documents | length > 2 %}
+<section class="card">
+  <h2>Toutes les versions</h2>
+  <ul class="timeline">
+    {% for d in documents %}
+    <li><time>{{ d.created_at | dt }}</time> {{ "CV" if d.kind == DocumentKind.CV else "Lettre" }} v{{ d.version }}{% if d.edited %} (modifiée){% endif %} — <a href="/documents/{{ d.id }}/pdf" target="_blank">voir</a> · <a href="/documents/{{ d.id }}/pdf?download=1">télécharger</a></li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+{% endblock %}

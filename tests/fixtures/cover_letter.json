@@ -1,0 +1,11 @@
+{
+  "subject": "Application for Data Engineer – Camille Martin",
+  "greeting": "Dear Hiring Manager,",
+  "paragraphs": [
+    {"text": "I am applying for the Data Engineer position at Lion City Bank. Your Data Platform team designs and operates the batch and streaming pipelines that feed risk and regulatory reporting, and this is precisely the kind of engineering work I want to do after my degree. The role relies on Apache Airflow, PySpark and SQL, which are the tools I have used most during my internships, and it puts data quality at the centre of the job.", "source_ids": []},
+    {"text": "At Airbus, I built an Airflow pipeline ingesting 2 TB of flight-test data per week into a PostgreSQL warehouse, and I cut a nightly batch job from 6 hours to 45 minutes by rewriting it with PySpark. Both projects match your need to design, build and maintain data pipelines with Apache Airflow and PySpark, on data volumes where performance and reliability matter every single day.", "source_ids": ["exp-airbus-1", "exp-airbus-2"]},
+    {"text": "Data quality matters as much as speed for regulatory reports. During the same internship I wrote data-quality checks that caught 30% more sensor anomalies before analysis, which is the kind of monitoring your team implements. I also want to work in Singapore: it combines a dense tech ecosystem with a regional hub role, which matches my goal of working on data platforms at scale.", "source_ids": ["exp-airbus-3", "mot-sg"]},
+    {"text": "I would welcome the opportunity to discuss how my experience with Airflow, PySpark and data-quality checks could support your Data Platform team. Thank you for your time and consideration.", "source_ids": ["exp-airbus"]}
+  ],
+  "closing": "Kind regards,"
+}

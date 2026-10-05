@@ -1,0 +1,16 @@
+{% macro score_badge(analysis) -%}
+{% if analysis %}<span class="badge {{ analysis.score | score_class }}" title="Score de pertinence">{{ analysis.score }}</span>
+{%- else %}<span class="badge neutral">–</span>{% endif %}
+{%- endmacro %}
+
+{% macro visa_badge(verdict) -%}
+{% if verdict %}<span class="badge {{ verdict | visa_class }}">{{ VISA_LABELS[verdict] }}</span>{% endif %}
+{%- endmacro %}
+
+{% macro status_badge(status) -%}
+<span class="status status-{{ status.value }}">{{ OFFER_STATUS_LABELS[status] }}</span>
+{%- endmacro %}
+
+{% macro csrf_field() -%}
+<input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+{%- endmacro %}

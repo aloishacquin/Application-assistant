@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf_field with context %}
+{% block title %}Sources{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Sources</h1>
+  <form method="post" action="/sources/sync">
+    {{ csrf_field() }}
+    <button class="primary" {% if running %}disabled{% endif %}>{{ "Collecte en cours…" if running else "Collecter maintenant" }}</button>
+  </form>
+</div>
+<p class="muted">
+  Collecte automatique via les API publiques (Greenhouse, Lever, Ashby) et les flux RSS,
+  {% if sources.schedule.enabled %}toutes les {{ sources.schedule.interval_hours | round(1) }} h tant que la plateforme tourne{% else %}planification désactivée{% endif %}.
+  Configuration : <code>config/sources.yaml</code>.
+</p>
+
+<section class="card">
+  <h2>Sources configurées</h2>
+  {% if sources.sources %}
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Source</th><th>Type</th><th>Dernière collecte</th><th>Résultat</th></tr></thead>
+      <tbody>
+        {% for spec in sources.sources %}
+        {% set run = last_by_source.get(spec.name) %}
+        <tr>
+          <td>{{ spec.name }}{% if not spec.enabled %} <span class="muted">(désactivée)</span>{% endif %}</td>
+          <td>{{ spec.type }}</td>
+          <td>{{ run.started_at | dt if run else "jamais" }}</td>
+          <td>
+            {% if run and run.error %}<span class="badge bad">Erreur</span> {{ run.error }}
+            {% elif run %}{{ run.new }} nouvelle(s), {{ run.filtered }} filtrée(s), {{ run.duplicates }} déjà vue(s), {{ run.out_of_area }} hors zone
+            {% else %}-{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="muted">Aucune source. Ajoute des entreprises dans <code>config/sources.yaml</code> puis redémarre la plateforme.</p>
+  {% endif %}
+</section>
+
+<div class="grid">
+  <section class="card">
+    <h2>Pré-filtre gratuit</h2>
+    <dl>
+      <dt>Lieux</dt><dd>{{ sources.filters.locations | join(", ") or "tous" }}</dd>
+      <dt>Mots-clés titre</dt><dd>{{ sources.filters.title_keywords | map("trim") | join(", ") or "aucun" }}</dd>
+      <dt>Exclus</dt><dd>{{ sources.filters.title_excludes | map("trim") | join(", ") or "aucun" }}</dd>
+    </dl>
+    <p class="hint">Les offres hors zone ne sont pas conservées. Les autres offres écartées restent visibles avec le filtre « Filtrée » de la page Offres.</p>
+  </section>
+  <section class="card">
+    <h2>Budget LLM</h2>
+    <dl>
+      <dt>Aujourd'hui</dt><dd>{{ "%.2f" | format(costs.today_usd) }} $ / {{ "%.2f" | format(sources.budget.daily_usd) }} $</dd>
+      <dt>Analyses par collecte</dt><dd>{{ sources.budget.max_analyses_per_run }} max.</dd>
+    </dl>
+    <p class="hint">Au-delà du budget, les offres restent « Nouvelles » et sont analysées le lendemain.</p>
+  </section>
+</div>
+
+{% if runs %}
+<section class="card">
+  <h2>Dernières collectes</h2>
+  <ul class="timeline">
+    {% for run in runs %}
+    <li><time>{{ run.started_at | dt }}</time> {{ run.source_name }} : {% if run.error %}erreur — {{ run.error }}{% else %}{{ run.fetched }} offres lues, {{ run.new }} nouvelle(s), {{ run.filtered }} filtrée(s){% endif %}</li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+{% endblock %}

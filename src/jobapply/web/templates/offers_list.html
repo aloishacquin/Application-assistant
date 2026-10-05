@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% from "_macros.html" import score_badge, visa_badge, status_badge %}
+{% block title %}Offres{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Offres</h1>
+  <a class="button primary" href="/offers/new">Ajouter une offre</a>
+</div>
+
+<form class="filters" method="get" action="/offers">
+  <label>Statut
+    <select name="status">
+      <option value="">Tous (sauf filtrées)</option>
+      {% for status, label in OFFER_STATUS_LABELS.items() %}
+      <option value="{{ status.value }}" {% if filters.status == status.value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>Visa
+    <select name="visa">
+      <option value="">Tous</option>
+      {% for value, label in VISA_LABELS.items() %}
+      <option value="{{ value }}" {% if filters.visa == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>Score min.
+    <input type="number" name="min_score" min="0" max="100" value="{{ filters.min_score }}">
+  </label>
+  <button type="submit">Filtrer</button>
+</form>
+
+{% if rows %}
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Score</th><th>Offre</th><th>Visa</th><th>Statut</th><th>Source</th><th>Ajoutée le</th></tr></thead>
+    <tbody>
+      {% for offer, analysis in rows %}
+      <tr>
+        <td>{{ score_badge(analysis) }}</td>
+        <td><a href="/offers/{{ offer.id }}">{{ offer.label }}</a></td>
+        <td>{{ visa_badge(analysis.visa_verdict if analysis else none) }}</td>
+        <td>{{ status_badge(offer.status) }}</td>
+        <td>{{ SOURCE_LABELS[offer.source] }}</td>
+        <td>{{ offer.created_at | dt }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="muted">Aucune offre ne correspond à ces filtres.</p>
+{% endif %}
+{% endblock %}

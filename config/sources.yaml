@@ -1,0 +1,32 @@
+# Automatic offer collection (SPEC section 6). Only public APIs and feeds: never LinkedIn,
+# Indeed or other sites whose terms forbid automated access.
+#
+# Finding a company's board name:
+#   greenhouse: https://boards.greenhouse.io/<board>   or   https://job-boards.greenhouse.io/<board>
+#   lever:      https://jobs.lever.co/<company>
+#   ashby:      https://jobs.ashbyhq.com/<board>
+#   rss:        the URL of an RSS or Atom feed of job offers
+
+schedule:
+  enabled: true
+  interval_hours: 6        # collection runs in the background while the platform is up
+
+# Free pre-filter, applied before any LLM call. Case-insensitive; locations match anywhere in
+# the location text, title terms match whole words only ("intern" does not match "Internal").
+filters:
+  locations: ["Singapore"]          # offers elsewhere are not stored at all
+  title_keywords: ["engineer", "engineering", "developer", "data", "software", "machine learning",
+                   "ml", "backend", "back-end", "python", "analytics", "analyst", "platform"]
+  title_excludes: ["senior", "sr", "sr.", "staff", "principal", "lead", "leader", "manager",
+                   "director", "head of", "vp", "intern", "internship", "account executive",
+                   "sales", "recruiter", "marketing"]
+
+budget:
+  daily_usd: 1.00                   # automatic analyses stop for the day beyond this LLM cost
+  max_analyses_per_run: 20
+
+sources:
+  - { type: greenhouse, name: Stripe, board: stripe }
+  - { type: lever, name: Palantir, company: palantir }
+  # - { type: ashby, name: Example, board: example }
+  # - { type: rss, name: Example feed, url: "https://example.com/jobs.rss" }

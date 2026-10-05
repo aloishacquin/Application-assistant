@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Ajouter une offre{% endblock %}
+{% block content %}
+<h1>Ajouter une offre</h1>
+<section class="card">
+  {% if error %}<div class="flash error" role="alert">{{ error }}</div>{% endif %}
+  <form method="post" action="/offers">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <label for="url">Lien de l'offre</label>
+    <input id="url" name="url" type="url" placeholder="https://…" value="{{ url }}">
+    <p class="hint">Le lien est récupéré une seule fois. Si la page est protégée (LinkedIn connecté, par exemple), colle plutôt le texte.</p>
+    <p class="separator">ou</p>
+    <label for="text">Texte de l'offre</label>
+    <textarea id="text" name="text" rows="12" placeholder="Colle ici le texte complet de l'offre">{{ text }}</textarea>
+    <button class="primary" type="submit">Analyser</button>
+  </form>
+</section>
+{% endblock %}

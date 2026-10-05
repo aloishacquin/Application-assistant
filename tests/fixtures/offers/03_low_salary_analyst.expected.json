@@ -1,0 +1,34 @@
+{
+  "title": "Junior Data Analyst",
+  "company": "Kopi Analytics Pte. Ltd.",
+  "location": "Singapore — On-site (Tanjong Pagar)",
+  "seniority": "junior",
+  "required_skills": [
+    "Excel",
+    "SQL"
+  ],
+  "nice_to_have": [
+    "Power BI",
+    "Tableau"
+  ],
+  "keywords": [
+    "Power BI",
+    "Excel",
+    "SQL",
+    "Tableau",
+    "dashboards",
+    "sales reports",
+    "ad-hoc analyses"
+  ],
+  "responsibilities": [
+    "Prepare weekly sales reports and dashboards in Power BI",
+    "Clean and analyse data with Excel and SQL",
+    "Support account managers with ad-hoc analyses for clients"
+  ],
+  "min_years_experience": 0,
+  "salary_min_sgd": 3800,
+  "salary_max_sgd": 4500,
+  "sector": "other",
+  "contact_email": "hr@kopianalytics.example",
+  "language": "en"
+}

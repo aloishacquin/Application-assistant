@@ -1,0 +1,104 @@
+# Fictional profile used by tests. Every reusable element has a stable, unique id.
+identity:
+  name: "Camille Martin"
+  email: "camille.martin@example.com"
+  phone: "+33 6 00 00 00 00"
+  location: "Marseille, France — open to relocate to Singapore"
+  links: { linkedin: "https://www.linkedin.com/in/camille-martin-example", github: "https://github.com/camille-martin-example" }
+  birth_year: 2002
+
+headline_variants:
+  - id: hl-data
+    text: "Engineering student specialised in data pipelines and machine learning"
+    tags: [data, ml, python]
+  - id: hl-swe
+    text: "Software engineer building reliable backend services in Python"
+    tags: [backend, python, api]
+
+education:
+  - id: edu-supaero
+    school: "ISAE-SUPAERO"
+    degree: "MSc in Aerospace Engineering — Data Science track"
+    dates: "2022–2026"
+    bullets:
+      - { id: edu-supaero-1, text: "Coursework in statistics, optimisation and machine learning", tags: [maths, ml] }
+      - { id: edu-supaero-2, text: "Ranked top 10% of a cohort of 200 students", tags: [academic] }
+  - id: edu-prepa
+    school: "Lycée Thiers"
+    degree: "Classes préparatoires MP"
+    dates: "2020–2022"
+    bullets:
+      - { id: edu-prepa-1, text: "Intensive two-year programme in mathematics and physics", tags: [maths] }
+
+experiences:
+  - id: exp-airbus
+    title: "Data Engineering Intern"
+    company: "Airbus"
+    location: "Toulouse, France"
+    dates: "Feb 2025 – Aug 2025"
+    bullets:
+      - id: exp-airbus-1
+        text: "Built an Airflow pipeline ingesting 2 TB of flight-test data per week into a PostgreSQL warehouse"
+        tags: [python, airflow, sql, data]
+        metrics: true
+      - id: exp-airbus-2
+        text: "Cut a nightly batch job runtime from 6 hours to 45 minutes by rewriting it with PySpark"
+        tags: [spark, python, performance]
+        metrics: true
+      - id: exp-airbus-3
+        text: "Wrote data-quality checks that caught 30% more sensor anomalies before analysis"
+        tags: [data-quality, python]
+        metrics: true
+  - id: exp-startup
+    title: "Software Engineering Intern"
+    company: "Calanques Tech"
+    location: "Marseille, France"
+    dates: "Jun 2024 – Aug 2024"
+    bullets:
+      - id: exp-startup-1
+        text: "Developed a REST API with FastAPI serving 5,000 daily requests for a booking platform"
+        tags: [python, fastapi, api, backend]
+        metrics: true
+      - id: exp-startup-2
+        text: "Set up CI with GitHub Actions and Docker, reducing deployment time by 50%"
+        tags: [devops, docker, ci]
+        metrics: true
+
+projects:
+  - id: proj-saas
+    name: "Invoice OCR SaaS"
+    description: "Side project: extracts structured data from scanned invoices"
+    bullets:
+      - { id: proj-saas-1, text: "Trained a document-layout model reaching 94% field-level accuracy", tags: [ml, pytorch, python], metrics: true }
+      - { id: proj-saas-2, text: "Deployed on AWS Lambda with a React front end", tags: [aws, react, serverless] }
+  - id: proj-kaggle
+    name: "Kaggle competitions"
+    description: "Tabular and time-series competitions"
+    bullets:
+      - { id: proj-kaggle-1, text: "Finished in the top 5% of a time-series forecasting competition", tags: [ml, forecasting], metrics: true }
+
+skills:
+  - { id: sk-python, name: "Python", level: advanced, tags: [dev, data] }
+  - { id: sk-sql, name: "SQL", level: advanced, tags: [data] }
+  - { id: sk-spark, name: "PySpark", level: intermediate, tags: [data, big-data] }
+  - { id: sk-airflow, name: "Airflow", level: intermediate, tags: [data, orchestration] }
+  - { id: sk-docker, name: "Docker", level: intermediate, tags: [devops] }
+  - { id: sk-fastapi, name: "FastAPI", level: intermediate, tags: [backend, api] }
+  - { id: sk-pytorch, name: "PyTorch", level: intermediate, tags: [ml] }
+  - { id: sk-aws, name: "AWS", level: beginner, tags: [cloud] }
+
+languages:
+  - { name: "French", level: native }
+  - { name: "English", level: "C1" }
+
+motivations:
+  - id: mot-sg
+    text: "Singapore combines a dense tech ecosystem with a regional hub role, which matches my goal of working on data platforms at scale."
+  - id: mot-asia
+    text: "I want to build my career in Asia-Pacific, where data infrastructure is growing fastest."
+
+constraints:
+  min_salary_sgd: 5600
+  target_roles: ["Data Engineer", "Software Engineer", "Machine Learning Engineer"]
+  available_from: "2026-09"
+  years_experience: 0

@@ -1,0 +1,7 @@
+<div class="card pending" hx-get="/offers/{{ offer.id }}/status" hx-trigger="every 2s" hx-swap="outerHTML">
+  <span class="spinner" aria-hidden="true"></span>
+  <div>
+    <strong>Analyse en cours…</strong>
+    <p class="muted">Récupération, extraction, visa et score. Cela prend généralement moins d'une minute ; la page se mettra à jour toute seule.</p>
+  </div>
+</div>

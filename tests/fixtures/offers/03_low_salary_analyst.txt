@@ -1,0 +1,18 @@
+Junior Data Analyst — Kopi Analytics Pte. Ltd. (fictional)
+Singapore — On-site (Tanjong Pagar)
+
+Kopi Analytics helps F&B chains understand their sales through dashboards and reporting.
+
+Job description
+- Prepare weekly sales reports and dashboards in Power BI
+- Clean and analyse data with Excel and SQL
+- Support account managers with ad-hoc analyses for clients
+
+Requirements
+- Diploma or degree in Business Analytics, Statistics or related field
+- Proficiency in Excel; basic SQL
+- Experience with Power BI or Tableau is a plus
+- Fresh graduates are welcome
+
+Salary: SGD 3,800 – 4,500 per month
+Contact: hr@kopianalytics.example

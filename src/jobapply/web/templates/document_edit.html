@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf_field with context %}
+{% block title %}Modifier {{ "le CV" if document.kind.value == "cv" else "la lettre" }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Modifier {{ "le CV" if document.kind.value == "cv" else "la lettre" }} <span class="muted">(v{{ document.version }})</span></h1>
+  <a class="button" href="/applications/{{ document.application_id }}">Annuler</a>
+</div>
+<p class="muted">Tes modifications créent une nouvelle version. Le validateur les vérifie : il signale tout chiffre, nom ou technologie absent de ton profil, sans bloquer l'enregistrement.</p>
+<form method="post" action="/documents/{{ document.id }}/edit" class="card">
+  {{ csrf_field() }}
+  {% for field in fields %}
+  <label for="f{{ loop.index }}">{{ field.label }}</label>
+  {% if field.multiline %}
+  <textarea id="f{{ loop.index }}" name="{{ field.path }}" rows="{{ 6 if document.kind.value == 'letter' else 2 }}">{{ field.text }}</textarea>
+  {% else %}
+  <input id="f{{ loop.index }}" type="text" name="{{ field.path }}" value="{{ field.text }}">
+  {% endif %}
+  {% endfor %}
+  <button class="primary" type="submit">Enregistrer une nouvelle version</button>
+</form>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Profil{% endblock %}
+{% block content %}
+<h1>Profil</h1>
+{% if error %}
+<section class="card error-card">
+  <h2>Profil invalide ou absent</h2>
+  <pre class="raw">{{ error }}</pre>
+  <p class="muted">Corrige <code>{{ profile_path }}</code> puis recharge cette page. Le format est décrit dans SPEC.md (section 7.1).</p>
+</section>
+{% else %}
+<section class="card">
+  <h2>{{ profile.identity.name }}</h2>
+  <p class="muted">{{ profile_path }} — valide</p>
+  <dl>
+    <dt>Accroches</dt><dd>{{ profile.headline_variants | length }}</dd>
+    <dt>Formations</dt><dd>{{ profile.education | length }}</dd>
+    <dt>Expériences</dt><dd>{{ profile.experiences | length }}</dd>
+    <dt>Projets</dt><dd>{{ profile.projects | length }}</dd>
+    <dt>Bullets</dt><dd>{{ profile.bullets | length }}</dd>
+    <dt>Compétences</dt><dd>{{ profile.skills | map(attribute="name") | join(", ") }}</dd>
+    <dt>Disponible</dt><dd>{{ profile.constraints.available_from }}</dd>
+    <dt>Postes visés</dt><dd>{{ profile.constraints.target_roles | join(", ") }}</dd>
+  </dl>
+</section>
+{% endif %}
+{% endblock %}

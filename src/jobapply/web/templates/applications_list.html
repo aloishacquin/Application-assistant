@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Candidatures{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Candidatures</h1>
+</div>
+
+<nav class="tabs" aria-label="Filtrer les candidatures">
+  {% for value, label in (("active", "En cours"), ("done", "Terminées"), ("all", "Toutes")) %}
+  <a href="/applications?view={{ value }}" {% if view == value and not status_filter %}aria-current="page"{% endif %}>{{ label }}</a>
+  {% endfor %}
+  {% if status_filter %}<span class="status status-application">{{ APPLICATION_STATUS_LABELS[status_filter] }}</span>{% endif %}
+</nav>
+
+{% if rows %}
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Offre</th><th>Statut</th><th>Envoyée le</th><th>Prochaine relance</th><th>Mise à jour</th></tr></thead>
+    <tbody>
+      {% for application, offer in rows %}
+      <tr>
+        <td><a href="/applications/{{ application.id }}">{{ offer.label }}</a></td>
+        <td><span class="status app-{{ application.status.value }}">{{ APPLICATION_STATUS_LABELS[application.status] }}</span></td>
+        <td>{{ application.applied_at | date }}</td>
+        <td>
+          {% if application.status in FOLLOW_UP_STATUSES and application.next_follow_up_at %}
+          {{ application.next_follow_up_at | date }} <span class="muted">({{ application.next_follow_up_at | relative_days }})</span>
+          {% elif application.interview_at and application.status.value == "interview" %}
+          Entretien le {{ application.interview_at | dt }}
+          {% else %}-{% endif %}
+        </td>
+        <td>{{ application.updated_at | date }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="muted">Aucune candidature ici. Accepte une offre (« Postuler ») pour en créer une.</p>
+{% endif %}
+{% endblock %}

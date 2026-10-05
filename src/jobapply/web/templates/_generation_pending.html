@@ -1,0 +1,7 @@
+<div class="card pending" hx-get="/applications/{{ application.id }}/status" hx-trigger="every 3s" hx-swap="outerHTML">
+  <span class="spinner" aria-hidden="true"></span>
+  <div>
+    <strong>Génération en cours…</strong>
+    <p class="muted">Sélection des faits, rédaction, vérification anti-invention puis rendu PDF. Compte une à deux minutes ; la page se mettra à jour toute seule.</p>
+  </div>
+</div>

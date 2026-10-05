@@ -1,0 +1,22 @@
+# Personal data and secrets — never commit
+data/
+.env
+output/
+*.db
+
+# Python / tooling
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+*.egg-info/
+dist/
+build/
+
+# Windows / editor
+*:Zone.Identifier
+Thumbs.db
+.vscode/*
+!.vscode/settings.json

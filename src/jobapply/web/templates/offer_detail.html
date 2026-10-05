@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% from "_macros.html" import score_badge, visa_badge, status_badge, csrf_field with context %}
+{% block title %}{{ offer.label }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>{{ job.title if job else "Offre #" ~ offer.id }}</h1>
+    <p class="subtitle">
+      {% if job %}{{ job.company }} · {{ job.location }}{% endif %}
+      {% if offer.url %} · <a href="{{ offer.url }}" target="_blank" rel="noopener noreferrer">voir l'offre</a>{% endif %}
+    </p>
+  </div>
+  {{ status_badge(offer.status) }}
+</div>
+
+{% if offer.status in (OfferStatus.NEW, OfferStatus.ANALYZING) %}
+  {% include "_analysis_pending.html" %}
+{% endif %}
+
+{% if offer.status == OfferStatus.ERROR %}
+<section class="card error-card">
+  <h2>L'analyse a échoué</h2>
+  <p>{{ offer.status_message }}</p>
+  {% if offer.duplicate_of %}<p><a href="/offers/{{ offer.duplicate_of }}">Voir l'offre #{{ offer.duplicate_of }}</a></p>{% endif %}
+  {% if offer.url %}
+  <form method="post" action="/offers/{{ offer.id }}/text">
+    {{ csrf_field() }}
+    <label for="text">Colle le texte de l'offre</label>
+    <textarea id="text" name="text" rows="8" required></textarea>
+    <button class="primary" type="submit">Analyser ce texte</button>
+  </form>
+  {% endif %}
+</section>
+{% endif %}
+
+{% if application %}
+<div class="flash success">Tu postules à cette offre : <a href="/applications/{{ application.id }}">candidature #{{ application.id }}</a> ({{ APPLICATION_STATUS_LABELS[application.status] | lower }}).</div>
+{% endif %}
+
+{% if analysis %}
+{% set visa = analysis.visa %}{% set match = analysis.match %}
+<section class="card recommendation {{ 'good' if analysis.recommended else 'bad' }}">
+  <div class="score-big {{ analysis.score | score_class }}">{{ analysis.score }}<small>/100</small></div>
+  <div>
+    <h2>{{ "À poursuivre" if analysis.recommended else "Déconseillé" }}</h2>
+    {% if analysis.stop_reasons %}<ul>{% for r in analysis.stop_reasons %}<li>{{ r }}</li>{% endfor %}</ul>{% endif %}
+    {% if match.summary %}<p>{{ match.summary }}</p>{% endif %}
+  </div>
+</section>
+{% endif %}
+
+<div class="actions">
+  {% if offer.status == OfferStatus.ANALYZED %}
+  <form method="post" action="/offers/{{ offer.id }}/accept">{{ csrf_field() }}<button class="primary">Postuler</button></form>
+  {% endif %}
+  {% if offer.status in (OfferStatus.ANALYZED, OfferStatus.ERROR, OfferStatus.FILTERED) %}
+  <form method="post" action="/offers/{{ offer.id }}/dismiss">{{ csrf_field() }}<button>Ignorer</button></form>
+  {% endif %}
+  {% if offer.status == OfferStatus.DISMISSED %}
+  <form method="post" action="/offers/{{ offer.id }}/restore">{{ csrf_field() }}<button>Rétablir</button></form>
+  {% endif %}
+  {% if offer.status not in (OfferStatus.NEW, OfferStatus.ANALYZING, OfferStatus.ACCEPTED) %}
+  <form method="post" action="/offers/{{ offer.id }}/reanalyze" class="reanalyze">
+    {{ csrf_field() }}
+    <label class="checkbox"><input type="checkbox" name="reextract" value="true"> réextraire l'offre</label>
+    <button>Réanalyser</button>
+  </form>
+  {% endif %}
+</div>
+
+{% if analysis %}
+<div class="grid">
+  <section class="card">
+    <h2>Visa Employment Pass {{ visa_badge(analysis.visa_verdict) }}</h2>
+    <dl>
+      <dt>Salaire offert</dt><dd>{{ format_salary(visa.salary_min_sgd, visa.salary_max_sgd) }}</dd>
+      <dt>Seuil applicable</dt><dd>{{ visa.threshold_sgd | sgd }} SGD/mois</dd>
+      <dt>Calcul</dt><dd>{{ visa.sector }}, {{ visa.age_at_start }} ans au {{ visa.start_date }}, seuils du {{ visa.thresholds_effective_from }}</dd>
+    </dl>
+    {% if visa.notes %}<ul class="notes">{% for n in visa.notes %}<li>{{ n }}</li>{% endfor %}</ul>{% endif %}
+  </section>
+
+  <section class="card">
+    <h2>Score détaillé</h2>
+    <dl>
+      <dt>Mots-clés</dt><dd>{{ match.keyword_score }}/100</dd>
+      <dt>Avis LLM</dt><dd>{{ match.llm_score if match.llm_score is not none else "–" }}/100</dd>
+      {% if match.experience_penalty %}<dt>Expérience</dt><dd>−{{ match.experience_penalty }} ({{ match.experience_gap_years }} an(s) manquant(s))</dd>{% endif %}
+    </dl>
+    <h3>Compétences requises</h3>
+    <p class="chips">
+      {% for s in match.matched_required %}<span class="chip good">{{ s }}</span>{% endfor %}
+      {% for s in match.missing_required %}<span class="chip bad">{{ s }}</span>{% endfor %}
+    </p>
+    {% if match.missing_keywords %}
+    <h3>Mots-clés absents du profil</h3>
+    <p class="chips">{% for s in match.missing_keywords %}<span class="chip neutral">{{ s }}</span>{% endfor %}</p>
+    {% endif %}
+  </section>
+</div>
+
+{% if match.strengths %}
+<div class="grid">
+  <section class="card"><h2>Forces</h2><ul>{% for s in match.strengths %}<li>{{ s }}</li>{% endfor %}</ul></section>
+  <section class="card"><h2>Lacunes</h2><ul>{% for s in match.gaps %}<li>{{ s }}</li>{% endfor %}</ul></section>
+</div>
+{% endif %}
+{% endif %}
+
+{% if job %}
+<section class="card">
+  <h2>Résumé de l'offre</h2>
+  <dl>
+    <dt>Séniorité</dt><dd>{{ SENIORITY_LABELS[job.seniority] }}</dd>
+    <dt>Expérience min.</dt><dd>{{ "Non indiquée" if job.min_years_experience is none else job.min_years_experience ~ " an(s)" }}</dd>
+    <dt>Salaire</dt><dd>{{ format_salary(job.salary_min_sgd, job.salary_max_sgd) }}</dd>
+    <dt>Secteur</dt><dd>{{ "Services financiers" if job.sector == "financial_services" else "Autre" }}</dd>
+    {% if job.contact_email %}<dt>Contact</dt><dd>{{ job.contact_email }}</dd>{% endif %}
+    {% if job.nice_to_have %}<dt>Appréciées</dt><dd>{{ job.nice_to_have | join(", ") }}</dd>{% endif %}
+  </dl>
+  {% if job.responsibilities %}
+  <h3>Responsabilités</h3>
+  <ul>{% for r in job.responsibilities %}<li>{{ r }}</li>{% endfor %}</ul>
+  {% endif %}
+</section>
+{% endif %}
+
+{% if offer.raw_text %}
+<details class="card">
+  <summary>Texte d'origine</summary>
+  <pre class="raw">{{ offer.raw_text }}</pre>
+</details>
+{% endif %}
+
+<section class="card">
+  <h2>Historique</h2>
+  <ul class="timeline">
+    {% for e in events %}<li><time>{{ e.created_at | dt }}</time> {{ e.message }}</li>{% endfor %}
+  </ul>
+</section>
+{% endblock %}

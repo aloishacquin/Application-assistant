@@ -1,0 +1,26 @@
+{
+  "headline": {"source_id": "hl-data", "text": "Engineering graduate building data pipelines with Airflow and PySpark"},
+  "section_order": ["experience", "education", "projects", "skills"],
+  "experiences": [
+    {"source_id": "exp-airbus", "bullets": [
+      {"source_id": "exp-airbus-1", "text": "Built an Airflow data pipeline ingesting 2 TB of flight-test data per week into a PostgreSQL warehouse"},
+      {"source_id": "exp-airbus-2", "text": "Cut a nightly batch job runtime from 6 hours to 45 minutes by rewriting it with PySpark"},
+      {"source_id": "exp-airbus-3", "text": "Wrote data-quality checks that caught 30% more sensor anomalies before analysis"}
+    ]},
+    {"source_id": "exp-startup", "bullets": [
+      {"source_id": "exp-startup-2", "text": "Set up CI with GitHub Actions and Docker, reducing deployment time by 50%"}
+    ]}
+  ],
+  "education": [
+    {"source_id": "edu-supaero", "bullets": [
+      {"source_id": "edu-supaero-1", "text": "Coursework in statistics, optimisation and machine learning"}
+    ]}
+  ],
+  "projects": [
+    {"source_id": "proj-kaggle", "bullets": [
+      {"source_id": "proj-kaggle-1", "text": "Finished in the top 5% of a time-series forecasting competition"}
+    ]}
+  ],
+  "skills": ["sk-python", "sk-sql", "sk-spark", "sk-airflow", "sk-docker"],
+  "keywords_covered": ["Airflow", "PySpark", "SQL", "Python", "data-quality monitoring"]
+}

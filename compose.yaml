@@ -1,0 +1,39 @@
+# JobApply SG — see DEPLOY.md.
+#   docker compose --profile caddy up -d --build   # app + HTTPS reverse proxy (Caddy)
+#   docker compose up -d --build                   # app only, behind your own reverse proxy
+services:
+  app:
+    build: .
+    image: jobapply:latest
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      COOKIE_SECURE: "true"
+      # The app port is only reachable from this machine (see "ports"), i.e. through the
+      # reverse proxy: its X-Forwarded-For header can be trusted (login throttling by IP).
+      FORWARDED_ALLOW_IPS: "*"
+    volumes:
+      - ./data:/app/data
+      - ./config:/app/config:ro
+    ports:
+      - "127.0.0.1:8000:8000"
+
+  caddy:
+    image: caddy:2
+    profiles: ["caddy"]
+    restart: unless-stopped
+    depends_on: [app]
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:

@@ -1,0 +1,11 @@
+# Never ship secrets or personal data in the image: they are mounted at runtime.
+.env
+data/
+.venv/
+.git/
+.pytest_cache/
+.ruff_cache/
+.coverage
+**/__pycache__/
+tests/
+deploy/

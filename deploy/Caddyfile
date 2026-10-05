@@ -1,0 +1,10 @@
+# HTTPS reverse proxy for JobApply SG. Caddy obtains and renews the certificate for $DOMAIN
+# automatically (the domain's DNS must point to this server, ports 80 and 443 open).
+{$DOMAIN} {
+	encode zstd gzip
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		-Server
+	}
+	reverse_proxy app:8000
+}

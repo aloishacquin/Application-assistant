@@ -1,0 +1,46 @@
+{
+  "title": "Data Engineer",
+  "company": "Lion City Bank",
+  "location": "Singapore (Marina Bay) — Hybrid",
+  "seniority": "entry",
+  "required_skills": [
+    "Python",
+    "SQL",
+    "Spark",
+    "Airflow"
+  ],
+  "nice_to_have": [
+    "dbt",
+    "Snowflake",
+    "Kafka",
+    "Financial services"
+  ],
+  "keywords": [
+    "Data Engineer",
+    "Apache Airflow",
+    "PySpark",
+    "Snowflake",
+    "SQL",
+    "dbt",
+    "data-quality monitoring",
+    "lineage",
+    "regulatory reporting",
+    "MAS",
+    "Python",
+    "Spark",
+    "Kafka",
+    "streaming"
+  ],
+  "responsibilities": [
+    "Design, build and maintain data pipelines with Apache Airflow and PySpark",
+    "Model data in the cloud data warehouse (Snowflake) using SQL and dbt",
+    "Implement data-quality monitoring and lineage",
+    "Work with risk analysts to deliver regulatory reports (MAS)"
+  ],
+  "min_years_experience": 0,
+  "salary_min_sgd": 7000,
+  "salary_max_sgd": 9000,
+  "sector": "financial_services",
+  "contact_email": "talent@lioncitybank.example",
+  "language": "en"
+}

@@ -1,0 +1,24 @@
+Software Engineer (Python, Backend) — Merlion Robotics (fictional)
+Singapore, one-north
+
+Merlion Robotics builds fleet-management software for autonomous warehouse robots used by logistics companies in Asia.
+
+What you'll do
+- Build and scale backend services in Python (FastAPI) that coordinate hundreds of robots in real time
+- Design REST and gRPC APIs consumed by our web dashboard and robots
+- Containerise services with Docker and deploy them on Kubernetes (AWS EKS)
+- Write tests and take part in code reviews and on-call rotation
+
+What we're looking for
+- Bachelor's or Master's degree in Computer Science or Engineering
+- Solid Python skills and experience building web APIs
+- Familiarity with Docker and CI/CD
+- Good communication in English
+
+Bonus points
+- Kubernetes, gRPC
+- Robotics or ROS experience
+- Experience with PostgreSQL and Redis
+
+Seniority: Junior to Mid-level
+Competitive salary and equity. Visa sponsorship available for the right candidate.

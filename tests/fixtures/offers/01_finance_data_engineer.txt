@@ -1,0 +1,31 @@
+Data Engineer — Lion City Bank (fictional)
+Location: Singapore (Marina Bay) — Hybrid
+Industry: Banking & Financial Services
+
+About us
+Lion City Bank is a leading regional bank serving retail and corporate clients across Southeast Asia.
+
+The role
+You will join our Data Platform team to design and operate batch and streaming pipelines feeding our risk and regulatory reporting.
+
+Responsibilities
+- Design, build and maintain data pipelines with Apache Airflow and PySpark
+- Model data in our cloud data warehouse (Snowflake) using SQL and dbt
+- Implement data-quality monitoring and lineage
+- Work with risk analysts to deliver regulatory reports (MAS)
+
+Requirements
+- Degree in Computer Science, Engineering or related field
+- 0–2 years of experience in data engineering (fresh graduates with strong internships welcome)
+- Strong Python and SQL
+- Experience with Spark and an orchestration tool (Airflow preferred)
+
+Nice to have
+- dbt, Snowflake
+- Kafka or other streaming technologies
+- Exposure to financial services
+
+Compensation
+SGD 84,000 – 108,000 per annum, plus annual bonus.
+
+Apply by sending your CV to talent@lioncitybank.example

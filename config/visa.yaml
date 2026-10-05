@@ -1,0 +1,19 @@
+# À mettre à jour chaque année depuis le site du MOM.
+# Monthly fixed salaries in SGD.
+effective_from: "2026-01-01"
+ep:
+  min_salary_sgd:
+    other: { base: 5600, at_45_plus: 10700 }
+    financial_services: { base: 6200, at_45_plus: 11800 }
+  upcoming:
+    effective_from: "2027-01-01"
+    other: { base: 6000 }
+    financial_services: { base: 6600 }
+  # Age curve: base threshold up to `base_until_age`, `at_45_plus` from `max_from_age`,
+  # linear interpolation in between.
+  # TODO: replace the interpolation with MOM's official age table.
+  age_curve:
+    base_until_age: 23
+    max_from_age: 45
+  compass_pass_mark: 40
+  compass_exempt_salary_sgd: 22500
